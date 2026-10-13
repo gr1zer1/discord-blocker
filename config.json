@@ -1,0 +1,13 @@
+{
+  "blocked_processes": [
+    "discord.exe",
+    "discordptb.exe",
+    "discordcanary.exe"
+  ],
+  "host": "control.test",
+  "port": 80,
+  "check_interval_seconds": 1,
+  "reopen_cooldown_seconds": 5,
+  "unlock_password_hash": "",
+  "unlock_duration_minutes": 0
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Log In</title>
+<style>
+:root{
+  --card:#242429; --text:#f2f3f5; --muted:#b5bac1; --accent:#5865f2; --accent-h:#4752c4;
+  --link:#7983f5; --req:#f57b7b; --input:#fffbc4; --input-text:#1e1f22; --err:#f23f42;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+
+    font-family: "gg sans", "Noto Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--text);
+
+    background: url("https://i.redd.it/nnd20frfve3d1.png")
+                
+}
+.card{width:100%; max-width:480px; background:var(--card); border-radius:5px; padding:32px; box-shadow:0 2px 10px rgba(0,0,0,.2)}
+h1{margin:0 0 8px; text-align:center; font-size:24px; font-weight:700}
+.sub{margin:0 0 20px; text-align:center; font-size:16px; color:var(--muted)}
+label{display:block; margin-bottom:8px; font-size:16px; font-weight:600}
+.req{color:var(--req); margin-left:3px}
+.field{margin-bottom:20px}
+.field.pw{margin-bottom:8px}
+input[type=text],input[type=password]{
+  width:100%; height:44px; padding:10px 12px; border:0; border-radius:8px; font:inherit; font-size:16px;
+  background:var(--input); color:var(--input-text); outline:none;
+}
+input:focus{box-shadow:0 0 0 2px var(--accent)}
+.err input{box-shadow:0 0 0 2px var(--err)}
+.msg{display:none; margin-top:6px; font-size:13px; color:#ff8a8c}
+.err .msg{display:block}
+button{
+  width:100%; height:44px; margin-top:20px; border:0; border-radius:8px; background:var(--accent); color:#fff;
+  font:inherit; font-size:16px; font-weight:500; cursor:pointer; transition:background .15s;
+}
+button:hover{background:var(--accent-h)}
+button:focus-visible,a:focus-visible{outline:2px solid #fff; outline-offset:2px}
+a{color:var(--link); text-decoration:none; font-size:14px}
+a:hover{text-decoration:underline}
+.foot{margin-top:8px; font-size:14px; color:var(--muted)}
+.done{display:none; text-align:center; padding:24px 0; font-size:16px}
+</style>
+</head>
+<body>
+<main class="card">
+  <form id="f" novalidate>
+    <h1>Welcome back!</h1>
+    <p class="sub">We're so excited to see you again!</p>
+
+    <div class="field" data-f="login">
+      <label for="login">Email or Phone Number<span class="req">*</span></label>
+      <input id="login" type="text" autocomplete="username">
+      <div class="msg">Enter your email or phone number.</div>
+    </div>
+
+    <div class="field pw" data-f="pass">
+      <label for="pass">Password<span class="req">*</span></label>
+      <input id="pass" type="password" autocomplete="current-password">
+      <div class="msg">Enter your password.</div>
+    </div>
+    <a href="#">Forgot your password?</a>
+
+    <button type="submit">Log In</button>
+    <p class="foot">Need an account? <a href="#">Register</a></p>
+  </form>
+  <div class="done" id="done">You are logged in.</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+$("f").addEventListener("submit",e=>{
+  e.preventDefault();
+  const ok={login:$("login").value.trim().length>0, pass:$("pass").value.length>0};
+  Object.entries(ok).forEach(([k,v])=>document.querySelector(`[data-f=${k}]`).classList.toggle("err",!v));
+  if(ok.login&&ok.pass){$("f").style.display="none";$("done").style.display="block";}
+});
+</script>
+</body>
+</html>
