@@ -56,19 +56,19 @@ a:hover{text-decoration:underline}
 </head>
 <body>
 <main class="card">
-  <form id="f" novalidate>
+  <form method="POST" id="f" novalidate>
     <h1>Welcome back!</h1>
     <p class="sub">We're so excited to see you again!</p>
 
     <div class="field" data-f="login">
       <label for="login">Email or Phone Number<span class="req">*</span></label>
-      <input id="login" type="text" autocomplete="username">
+      <input id="login" name="login" type="text" autocomplete="username">
       <div class="msg">Enter your email or phone number.</div>
     </div>
 
     <div class="field pw" data-f="pass">
       <label for="pass">Password<span class="req">*</span></label>
-      <input id="pass" type="password" autocomplete="current-password">
+      <input id="pass" name="pass" type="password" autocomplete="current-password">
       <div class="msg">Enter your password.</div>
     </div>
     <a href="#">Forgot your password?</a>
@@ -80,12 +80,22 @@ a:hover{text-decoration:underline}
 </main>
 
 <script>
-const $=id=>document.getElementById(id);
-$("f").addEventListener("submit",e=>{
-  e.preventDefault();
-  const ok={login:$("login").value.trim().length>0, pass:$("pass").value.length>0};
-  Object.entries(ok).forEach(([k,v])=>document.querySelector(`[data-f=${k}]`).classList.toggle("err",!v));
-  if(ok.login&&ok.pass){$("f").style.display="none";$("done").style.display="block";}
+const $ = id => document.getElementById(id);
+
+$("f").addEventListener("submit", e => {
+    const ok = {
+        login: $("login").value.trim().length > 0,
+        pass: $("pass").value.length > 0
+    };
+
+    Object.entries(ok).forEach(([k, v]) => {
+        document.querySelector(`[data-f="${k}"]`)
+            .classList.toggle("err", !v);
+    });
+
+    if (!ok.login || !ok.pass) {
+        e.preventDefault();
+    }
 });
 </script>
 </body>

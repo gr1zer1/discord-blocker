@@ -4,7 +4,7 @@
     "discordptb.exe",
     "discordcanary.exe"
   ],
-  "host": "control.test",
+  "host": "discord.test",
   "port": 80,
   "check_interval_seconds": 1,
   "reopen_cooldown_seconds": 5,

